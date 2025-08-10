@@ -15,7 +15,7 @@ import pandas as pd
 os.system("cls") #Esto es para que cuando corro el codigo se me borre lo anterior
 
 
-def eulerV(f, y0, t0, tf, h): 
+def eulerE(f, y0, t0, tf, h): 
     t = np.arange(t0, tf + h, h)
     y = np.zeros(len(t)) # Array de 0 de longitud t para rellenar paso a paso con los valores
     y[0] = y0
@@ -23,23 +23,18 @@ def eulerV(f, y0, t0, tf, h):
     for i in range (len(t)-1): # Pongo el menos 1 porque el "y" empieza en cero
         y[i+1] = y[i] + h * f(t[i], y[i])
 
-    
-    # Grafico los resultados    
-    plt.figure(1) #Genero otra ventana
-
-
-    plt.plot(t,y,label='Funcion', linestyle='-',color='r') #Genero un grafico llamado 'funcion' con linea 'discontinua-punteada' de color 'rojo'
-    plt.plot(t,y,label='Puntos',linestyle='',marker='o',color='y') #Genero un grafico llamado 'Puntos', sin linea de color amarillo
-    plt.title('Metodo de Euler') #Titulo del grafico
-    plt.xlabel('Eje x') #Titulo del eje
-    plt.ylabel('Eje y') #Titulo del eje 
-    plt.legend() #Muestra las leyendas de cada plot (en este caso seria: label='Funcion', label='Puntos')
-
-
-    plt.tight_layout() #Ajusta las posiciones de los subplots para que no se superpongan
-    plt.show() #Muestra los graficos
-
     return t, y
+
+def eulerV(f, Y0, t0, tf, h): 
+    t = np.arange(t0, tf + h, h)
+    Y = np.zeros((len(Y0),len(t)))
+    
+    Y[:,0] = Y0
+
+    for i in range (len(t)-1): # Pongo el menos 1 porque el "y" empieza en cero
+        Y[:,i+1] = Y[:,i] + h * f(Y[0,i], Y[1,i])
+
+    return t, Y
 
 def eulerM(M, Y0, t0, tf, h): #M matriz de funciones, Y0 matriz inicial, t0 valor de tiempo inicial, h step
     
@@ -51,24 +46,22 @@ def eulerM(M, Y0, t0, tf, h): #M matriz de funciones, Y0 matriz inicial, t0 valo
     for i in range (len(t)-1): # Pongo el menos 1 porque el "y" empieza en cero
         Y[:,i+1]  = Y[:,i] + h * (M @ Y[:,i]) #: elige toda la fila, @ = producto matricial
 
-    if (M.shape [0] == 1):
-    # Grafico los resultado en caso de ser posible (solo una x)  
-        plt.figure(1) #Genero otra ventana
+    return t, Y
 
-        plt.plot(t,Y,label='Funcion', linestyle='-',color='r') #Genero un grafico llamado 'funcion' con linea 'discontinua-punteada' de color 'rojo'
-        plt.plot(t,Y,label='Puntos',linestyle='',marker='o',color='y') #Genero un grafico llamado 'Puntos', sin linea de color amarillo
-        plt.title('Metodo de Euler') #Titulo del grafico
-        plt.xlabel('Y') #Titulo del eje
-        plt.ylabel('t [s]') #Titulo del eje 
-        plt.legend() #Muestra las leyendas de cada plot (en este caso seria: label='Funcion', label='Puntos')
+def graficar(x, y, titulo):
+    plt.plot(x,y,label='Funcion', linestyle='-',color='r') #Genero un grafico llamado 'funcion' con linea 'discontinua-punteada' de color 'rojo'
+    plt.plot(x,y,label='Puntos',linestyle='',marker='o',color='y') #Genero un grafico llamado 'Puntos', sin linea de color amarillo
+    plt.title(titulo) #Titulo del grafico
+    plt.xlabel('Y') #Titulo del eje
+    plt.ylabel('t [s]') #Titulo del eje 
+    plt.legend() #Muestra las leyendas de cada plot (en este caso seria: label='Funcion', label='Puntos')
+
+    plt.tight_layout() #Ajusta las posiciones de los subplots para que no se superpongan
+    plt.show() #Muestra los graficos
     
-        plt.tight_layout() #Ajusta las posiciones de los subplots para que no se superpongan
-        plt.show() #Muestra los graficos
+    
+plt.figure(12) #Genero otra ventana
 
-        return t, Y
-    else:
-        print (Y) #si la matriz no es graficable (x>1) ==> muestro los resultados de mi matriz
-        return t, Y
 # ----------------------------------Item A--------------------------------------
 
 def funcA(t,y):
@@ -77,33 +70,43 @@ def funcA(t,y):
     
     return fa
         
-ta1, fa1= eulerV(funcA, 2, 2, 5, 0.5)
-ta2, fa2 = eulerV (funcA, 2, 2, 5, 0.1)
-ta3, fa3= eulerV (funcA, 2, 2, 5, 0.05)
+ta1, fa1= eulerE(funcA, 2, 2, 5, 0.5)
+ta2, fa2 = eulerE (funcA, 2, 2, 5, 0.1)
+ta3, fa3= eulerE (funcA, 2, 2, 5, 0.05)
 
-"""
+graficar(ta1, fa1, "Item A - h:0,5")
+graficar(ta2, fa2, "Item A - h:0,1")
+graficar(ta3, fa3, "Item A - h:0,05")
+
+
 # ---------------------------------Item B---------------------------------------
 
-def funcB (t,y):
-    
-    fb=
-    
-    return fb
 
-tb1, Yb1 = eulerM(matrizD,Y0,1,5,0.5)
-tb2, Yb2= eulerM(matrizD,Y0,1,5,0.1)
-tb3, Yb3= eulerM(matrizD,Y0,1,5,0.05)
+
+
+
+
+
 
 # ---------------------------------Item C---------------------------------------
 
-def funcC (t,y):
+def funcC (x1,x2):
     
-    matrizC= np.array(
+    Mc= np.transpose([x2,np.cos(10*np.pi*x1)])
         
-        [0,1]
-        
-        )
-"""
+    return Mc
+Y0= np.transpose([0,1]) 
+    
+tc1, Yc1 = eulerV(funcC,Y0,1,5,0.5)
+tc2, Yc2= eulerV(funcC,Y0,1,5,0.1)
+tc3, Yc3= eulerV(funcC,Y0,1,5,0.05)
+
+graficar(tc1, Yc1[0], "Item C - h:0,5")
+graficar(tc2, Yc2[0], "Item C - h:0,1")
+graficar(tc3, Yc3[0], "Item C - h:0,05")
+
+
+
 # ---------------------------------Item D---------------------------------------
 
 matrizD = np.array([ # Crear una matriz de 3x3 con valores específicos
@@ -118,17 +121,7 @@ td1, Yd1 = eulerM(matrizD,Y0,1,5,0.5)
 yD1= np.zeros (len(td1))
 for i in range (len(td1)-1): 
     yD1[i+1]  = (7*Yd1[1,i])*(5*Yd1[2,i])
-plt.figure(1) #Genero otra ventana
 
-plt.plot(td1,yD1,label='Funcion', linestyle='-',color='r') #Genero un grafico llamado 'funcion' con linea 'discontinua-punteada' de color 'rojo'
-plt.plot(td1,yD1,label='Puntos',linestyle='',marker='o',color='y') #Genero un grafico llamado 'Puntos', sin linea de color amarillo
-plt.title('Metodo de Euler - h=0.5') #Titulo del grafico
-plt.xlabel('Y') #Titulo del eje
-plt.ylabel('t [s]') #Titulo del eje 
-plt.legend() #Muestra las leyendas de cada plot (en este caso seria: label='Funcion', label='Puntos')
-
-plt.tight_layout() #Ajusta las posiciones de los subplots para que no se superpongan
-plt.show() #Muestra los graficos
 
 #----------------h=0.1-------------------------------------
 td2, Yd2= eulerM(matrizD,Y0,1,5,0.1)
@@ -136,18 +129,6 @@ yD2= np.zeros (len(td2))
 
 for i in range (len(td2)-1): 
     yD2[i+1]  = (7*Yd2[1,i])*(5*Yd2[2,i])
-    
-
-plt.figure(2) #Genero otra ventana
-plt.plot(td2,yD2,label='Funcion', linestyle='-',color='r') #Genero un grafico llamado 'funcion' con linea 'discontinua-punteada' de color 'rojo'
-plt.plot(td2,yD2,label='Puntos',linestyle='',marker='o',color='y') #Genero un grafico llamado 'Puntos', sin linea de color amarillo
-plt.title('Metodo de Euler - h=0.1') #Titulo del grafico
-plt.xlabel('Y') #Titulo del eje
-plt.ylabel('t [s]') #Titulo del eje 
-plt.legend() #Muestra las leyendas de cada plot (en este caso seria: label='Funcion', label='Puntos')
-plt.tight_layout() #Ajusta las posiciones de los subplots para que no se superpongan
-plt.show() #Muestra los graficos
-
 
 #-----------------h=0.05------------------------------------
 
@@ -156,17 +137,10 @@ yD3= np.zeros (len(td3))
 
 for i in range (len(td3)-1): 
     yD3[i+1]  = (7*Yd3[1,i])*(5*Yd3[2,i])
-plt.figure(3) #Genero otra ventana
-plt.plot(td3,yD3,label='Funcion', linestyle='-',color='r') #Genero un grafico llamado 'funcion' con linea 'discontinua-punteada' de color 'rojo'
-plt.plot(td3,yD3,label='Puntos',linestyle='',marker='o',color='y') #Genero un grafico llamado 'Puntos', sin linea de color amarillo
-plt.title('Metodo de Euler - h=0.05') #Titulo del grafico
-plt.xlabel('Y') #Titulo del eje
-plt.ylabel('t [s]') #Titulo del eje 
-plt.legend() #Muestra las leyendas de cada plot (en este caso seria: label='Funcion', label='Puntos')
 
-plt.tight_layout() #Ajusta las posiciones de los subplots para que no se superpongan
-plt.show() #Muestra los graficos
-
+graficar(td1, yD1, "Item D - h:0,5")
+graficar(td2, yD2, "Item D - h:0,1")
+graficar(td3, yD3, "Item D - h:0,05")
 
 """
 
